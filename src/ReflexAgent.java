@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -103,31 +104,41 @@ public class ReflexAgent {
 			   
 			   //test to see if item is nearby
 			   String itemDir = itemNearby();
-			   cheesePath();
-			   avoidObstacle();
+			   
+			   if(!cheesePath())
+			   {
+				   if(path.peek() == null)
+					   avoidObstacle();
+				   if(haveHammer() && !objectAdjacent("@"))
+					   pathToRock();
+				   if(haveKey() && !objectAdjacent("#"))
+					   pathToDoor();
+			   }
 				
 			   //if have cheese, use it
 			   if(haveCheese())
 				  cmd  = "u";
-			   
-			   else if(path.peek() != null)
-				   cmd = executePath();
+			 
 			   
 			   //this block deals with narrows and generally just tries to go into them and drops stuff before
 			   else if(sight[2][2].contains("=") && haveHammer())
 				  cmd = "d T";
 			   else if(sight[2][2].contains("=") && haveKey())
 				   cmd = "d K";
-			   else if (sight[2][2].contains("=") && !haveHammer() && !haveKey())
-					  cmd = "f";
-			   else if (sight[1][1].contains("="))
-					  cmd = "r";
-			   else if (sight[1][3].contains("="))
-					  cmd = "l";
+			  // else if (sight[1][1].contains("="))
+					 // cmd = "r";
+			  // else if (sight[1][3].contains("="))
+					  //cmd = "l";
+			   
+			   else if(pickupItem()&& !sight[2][2].contains("="))
+				   cmd = "g";
+			   
+			   else if(path.peek() != null)
+				   cmd = executePath();
 			   
 			   //if  there is something to pickup execute grab
-			   else if(pickupItem())
-				   cmd = "g";
+			   //else if(pickupItem() && !sight[2][2].contains("="))
+				  // cmd = "g";
 			   
 			  //if there is a rock in front and have hammer use hammer
 			  else if(sight[2][2].contains("@") && haveHammer())
@@ -272,7 +283,7 @@ public class ReflexAgent {
 			   }
 			   
 			   //hug corners generally if not go towards smell
-			   else if(ifObstacle(getLoc(2, 1)) && smell == 'r')
+			   /*else if(ifObstacle(getLoc(2, 1)) && smell == 'r')
 			   {
 				   num = 1 + (int)(Math.random() * 5);
 				   
@@ -280,7 +291,7 @@ public class ReflexAgent {
 					   cmd = "r";
 				   else
 					   cmd = "f";
-			   }
+			   }*/
 			   
 			   //same as above
 			   else if(ifObstacle(getLoc(2, 3)) && smell == 'l')
@@ -486,25 +497,25 @@ public class ReflexAgent {
 		//
 		for(int i = 2; i < 7; i++)
 		{
-			if(sight[i][2].equals("*") || sight[i][2].equals("@") || sight[i][2].equals("#"))
+			if(sight[i][2].equals("*") || sight[i][2].equals("@") || sight[i][2].equals("#") || sight[i][2].equals("="))
 				break;
-			else if(sight[i][2].contains("T") || sight[i][2].contains("+") || sight[i][2].contains("K"))
+			else if((sight[i][2].contains("T") && !haveHammer()) || (sight[i][2].contains("K") && !haveKey()))
 				return "f";
 		}
 		
 		for(int i = 3; i < 5; i++)
 		{
-			if(sight[1][i].equals("*") || sight[1][i].equals("@")  || sight[i][2].equals("#"))
+			if(sight[1][i].equals("*") || sight[1][i].equals("@")  || sight[1][i].equals("#")  || sight[1][i].equals("="))
 				break;
-			else if(sight[1][i].contains("T") || sight[1][i].contains("+") || sight[1][i].contains("K"))
+			else if((sight[1][i].contains("T") && !haveHammer()) || (sight[1][i].contains("K") && !haveKey()))
 				return "l";
 		}
 		
 		for(int i = 1; i >= 0; i--)
 		{
-			if(sight[1][i].equals("*") || sight[1][i].equals("@")  || sight[i][2].equals("#"))
+			if(sight[1][i].equals("*") || sight[1][i].equals("@")  || sight[1][i].equals("#")  || sight[1][i].equals("="))
 				break;
-			if(sight[1][i].contains("T") || sight[1][i].contains("+") || sight[1][i].contains("K"))
+			if((sight[1][i].contains("T") && !haveHammer()) || (sight[1][i].contains("K") && !haveKey()))
 				return "r";
 		}
 		
@@ -591,20 +602,174 @@ public class ReflexAgent {
 		return false;
 	}
 	
-	private void avoidObstacle()
+	private void pathToRock()
 	{
-		if(ifObstacle(sight[2][2]) && smell == 'f')
+		if(sight[2][2].contains("@"))
+			return;
+		
+		if(mm.rock == true)
 		{
-			path = mm.findPath(position, translatePosition(0, 2));
+			ArrayList<Point> list = mm.itemSearch("@");
+			
+			for (Point val : list) 
+			{
+				Point rockP = val.copy();
+				rockP.x = rockP.x - 1;
+				path = mm.findPath(position, rockP);
+				if(path.peek() != null)
+					return;
+				
+				rockP.x = rockP.x + 2;
+				path = mm.findPath(position, rockP);
+				if(path.peek() != null)
+					return;
+				
+				rockP.x = rockP.x - 1;
+				rockP.y = rockP.y - 1;
+				path = mm.findPath(position, rockP);
+				if(path.peek() != null)
+					return;
+				
+				rockP.y = rockP.y + 2;
+				path = mm.findPath(position, rockP);
+			}
 		}
 	}
 	
-	private void cheesePath()
+	private void pathToDoor()
+	{
+		if(sight[2][2].contains("#"))
+			return;
+		
+		if(mm.rock == true)
+		{
+			ArrayList<Point> list = mm.itemSearch("#");
+			
+			for (Point val : list) 
+			{
+				Point rockP = val.copy();
+				rockP.x = rockP.x - 1;
+				path = mm.findPath(position, rockP);
+				if(path.peek() != null)
+					return;
+				
+				rockP.x = rockP.x + 2;
+				path = mm.findPath(position, rockP);
+				if(path.peek() != null)
+					return;
+				
+				rockP.x = rockP.x - 1;
+				rockP.y = rockP.y - 1;
+				path = mm.findPath(position, rockP);
+				if(path.peek() != null)
+					return;
+				
+				rockP.y = rockP.y + 2;
+				path = mm.findPath(position, rockP);
+			}
+		}
+	}
+	
+	private void avoidObstacle()
+	{
+		boolean obstacle = false;
+		int obstacleRow = 2;
+		
+		/*if(ifObstacle(sight[2][2]) && smell == 'f')
+		{
+			path = mm.findPath(position, translatePosition(0, 2));
+		}*/
+		
+		int row = 2;
+		if(smell == 'f')
+		{
+				for(row = 2; row < 6; row++)
+				{
+					if(ifObstacle(sight[row][2]))
+					{
+						obstacle = true;
+						obstacleRow = row;
+					}
+				}
+			
+			if(obstacle)
+			{
+				for(int row2 = obstacleRow + 1; row2 < 7; row2++)
+				{
+					for(int col = 0; col < 5; col++)
+					{
+						if(!ifObstacle(sight[row2][col]))
+							path = mm.findPath(position, translatePosition(2 - col, row2 - 1));
+						
+						if(path != null)
+							return;
+					}
+				}
+			}
+		}
+		
+		else if(smell == 'r')
+		{
+			if(ifObstacle(sight[1][1]))
+			{
+				obstacle = true;
+				obstacleRow = row;
+			}
+			
+			if(obstacle)
+			{
+				for(int row2 = 0; row2 < 7; row2++)
+				{
+					if(!ifObstacle(sight[row2][0]))
+						path = mm.findPath(position, translatePosition(2, row2 - 1));
+					
+					if(path != null)
+						return;
+				}
+			}
+		}
+		else if(smell == 'l')
+		{
+			if(ifObstacle(sight[1][3]))
+			{
+				obstacle = true;
+				obstacleRow = row;
+			}
+			
+			if(obstacle)
+			{
+				for(int row2 = 0; row2 < 7; row2++)
+				{
+					if(!ifObstacle(sight[row2][4]))
+						path = mm.findPath(position, translatePosition(-2, row2 - 1));
+					
+					if(path != null)
+						return;
+				}
+			}
+		}
+	}
+	
+	private boolean cheesePath()
 	{
 		Point cheese = mm.getCheese();
+		Queue<String> tempPath = null;
 		
 		if(cheese != null)
-			path = mm.findPath(position, cheese);
+		{
+			tempPath = mm.findPath(position, cheese);
+		}
+		
+		if(tempPath != null)
+		{
+			if(tempPath.peek() != null)
+			{
+				path = tempPath;
+				return true;
+			}
+		}
+		
+		return false;
 			
 	}
 	
@@ -615,8 +780,30 @@ public class ReflexAgent {
 			path.remove();
 			return "f";
 		}
+		else if(direction == 'e' && path.peek().charAt(0) == 'n')
+			return "l";
+		else if(direction == 'n' && path.peek().charAt(0) == 'w')
+			return "l";
+		else if(direction == 'w' && path.peek().charAt(0) == 's')
+			return "l";
+		else if(direction == 's' && path.peek().charAt(0) == 'e')
+			return "l";
 		else
 			return "r";
+	}
+	
+	private boolean objectAdjacent(String s)
+	{
+		if(sight[2][2].contains(s))
+			return true;
+		else if(sight[1][1].contains(s))
+			return true;
+		else if(sight[1][3].contains(s))
+			return true;
+		else if(sight[0][2].contains(s))
+			return true;
+		else
+			return false;
 	}
 	
 	//function writes to output socket with inputted command

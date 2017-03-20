@@ -47,6 +47,10 @@ public class TestMain {
 		
 		mm.printMap();
 		
+		String items = "";
+		
+		System.out.println(items.contains("@"));
+		
 		
 	}
 }

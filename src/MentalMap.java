@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -9,6 +10,8 @@ public class MentalMap {
 	private Queue<String> pathQueue;
 	
 	Point cheese;
+	Boolean rock;
+	Boolean door;
 	
 	public enum Direction {
 	    NORTH, EAST, SOUTH, WEST
@@ -21,6 +24,8 @@ public class MentalMap {
 		
 		insertNode(true, new Point(0,0), true, "b");
 		cheese = null;
+		rock = false;
+		door = false;
 	}
 	
 	
@@ -49,10 +54,10 @@ public class MentalMap {
 		System.out.println("At point: " + current.toString());
 		
 		current = toRight(current, d);
-		exploreNode(current.getPoint(), canAccess(sight[1][1]), sight[1][1]);
+		exploreNode(current.getPoint(), canAccess(sight[1][1], current.getPoint()), sight[1][1]);
 		
 		current = toRight(current, d);
-		exploreNode(current.getPoint(), canAccess(sight[0][1]), sight[0][1]);
+		exploreNode(current.getPoint(), canAccess(sight[0][1], current.getPoint()), sight[0][1]);
 		
 		current = toDown(current, d);
 		
@@ -63,7 +68,7 @@ public class MentalMap {
 			
 			for(int col = 0; col < 5; col++)
 			{
-				exploreNode(current.getPoint(), canAccess(sight[row][col]), sight[row][col]);
+				exploreNode(current.getPoint(), canAccess(sight[row][col], current.getPoint()), sight[row][col]);
 				System.out.print("(" + current.getItems() + ")");
 				if(col < 4)
 					current = toLeft(current, d);
@@ -97,6 +102,7 @@ public class MentalMap {
 		while(q.peek() != null)
 		{
 			Node cur = q.remove();
+			
 			
 			Node west = toWest(cur);
 			Node south = toSouth(cur);
@@ -165,6 +171,22 @@ public class MentalMap {
 		
 	}
 	
+	public ArrayList<Point> itemSearch(String s)
+	{
+		ArrayList<Point> list = new ArrayList<Point>();
+		
+		for (Node value : map.values()) 
+		{
+			String temp = value.getItems();
+			
+			if(value.getExplored())
+			    if(temp.contains(s))
+			    	list.add(value.getPoint());
+		}
+		
+		return list;
+	}
+	
 	public void insertUnexploredNode(Point pt)
 	{
 		Node n = new Node(false, pt);
@@ -177,12 +199,18 @@ public class MentalMap {
 		
 		Node n = map.get(pt.toString());
 		
+		if(items.contains("@"));
+			rock = true;
+		if(items.contains("#"));
+			door = true;
+		
+		n.setAccessible(access);
+		n.setItems(items);
+		
 		if(n.getExplored())
 			return;
 		
 		n.explore();
-		n.setAccessible(access);
-		n.setItems(items);
 		
 		if(items.contains("+"))
 			cheese = n.getPoint();
@@ -411,10 +439,20 @@ public class MentalMap {
 		return map.get(key);
 	}
 	
-	public boolean canAccess(String s)
+	public boolean canAccess(String s, Point p)
 	{
 		if(s.contains("*"))
 			return false;
+		else if(s.contains("@"))
+		{
+			rock = true;
+			return false;
+		}
+		else if(s.contains("#"))
+		{
+			door = true;;
+			return false;
+		}
 		else
 			return true;
 	}
