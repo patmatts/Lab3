@@ -187,7 +187,46 @@ public class MentalMap {
 		return list;
 	}
 	
-	public void insertUnexploredNode(Point pt)
+	public Point nearestUnexploredNode()
+	{
+		Node minD = null;
+		
+		for (Node value : map.values())
+		{
+			if(value != null)
+			{
+				if(value.d < 10000)
+					if(minD == null)
+					{
+						if(isUnexplored(value))
+							minD = value;
+					}
+					else if(value.d < minD.d && isUnexplored(value))
+						minD = value;
+			}
+		}
+		
+		if(minD != null)
+			return minD.getPoint();
+		else
+			return null;
+	}
+	
+	private boolean isUnexplored(Node v)
+	{
+		if(!toEast(v).getExplored())
+			return true;
+		else if(!toWest(v).getExplored())
+			return true;
+		else if(!toSouth(v).getExplored())
+			return true;
+		else if(!toNorth(v).getExplored())
+			return true;
+		else
+			return false;
+	}
+	
+	private void insertUnexploredNode(Point pt)
 	{
 		Node n = new Node(false, pt);
 		
@@ -250,29 +289,40 @@ public class MentalMap {
 			
 	}
 	
-	public Queue<String> findPath(Point startP, Point destP)
+	public Queue<String> findPath(Point startP, Point destP, boolean narrowsMatter)
 	{
 		pathQueue = new LinkedList<String>();
 		
 		Node start = map.get(startP.toString());
 		Node dest = map.get(destP.toString());
 		
-		path(start, dest);
+		if(path(start, dest, narrowsMatter))
+			pathQueue = new LinkedList<String>();
 		
 		return pathQueue;
 	}
 	
-	private void path(Node start, Node dest)
+	private boolean path(Node start, Node dest, boolean narrowsMatter)
 	{
+		boolean failure = false;
+		
 		if(dest == start)
 			;
 		else if(dest.parent == null)
-			return;
+			return false;
 		else
 		{
-			path(start, dest.parent);
+			if(narrowsMatter && dest.getItems().contains("="))
+			{
+				pathQueue = new LinkedList<String>();
+				return true;
+			}
+			
+			failure = path(start, dest.parent, narrowsMatter);
 			pathQueue.add(dest.parentDir);
 		}
+		
+		return failure;
 	}
 	
 	public Boolean toWestB(Node node)

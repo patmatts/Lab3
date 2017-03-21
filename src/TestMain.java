@@ -38,7 +38,7 @@ public class TestMain {
 		
 		mm.updateMap(sight2, 'e', new Point(0, 0));
 		
-		Queue<String> path = mm.findPath(new Point(0, 0), new Point(-2, 2));
+		Queue<String> path = mm.findPath(new Point(0, 0), new Point(-2, 2), false);
 		
 		for (String value : path) 
 		{

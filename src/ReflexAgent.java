@@ -24,6 +24,7 @@ public class ReflexAgent {
 	Point position;
 	MentalMap mm;
 	
+	//current subgoal to complete
 	Queue<String> path;
 	
 	// constants to indicate errors or conditions for the agent
@@ -89,8 +90,8 @@ public class ReflexAgent {
 			   
 			   agentStatus = readSensors();
 			   mm.updateMap(sight, direction, position);
-			   mm.printMap();
-			   
+			   //mm.printMap();
+			   System.out.println(energy);
 			   //if agent status is finished return the status
 			   if(agentStatus != CONTINUE)
 				   return agentStatus;
@@ -159,6 +160,19 @@ public class ReflexAgent {
 			  //if there is an item nearby move in direction of item
 			  else if(!itemDir.equals("e"))
 				   cmd = itemDir;
+			   
+			  else if(energy < 1500 && mm.nearestUnexploredNode() != null && path.peek() == null)
+			  {
+				  Point p = mm.nearestUnexploredNode();
+				  
+				  if(p != null)
+					  path = mm.findPath(position, p, false);
+				  
+				  if(path.peek() != null)
+					  cmd = executePath();
+				  else
+					  cmd = "r";
+			  }
 			   
 			  // if there is an obstacle in front and left go right most of the time
 			  else if (ifObstacle(getLoc(2, 2)) && ifObstacle(getLoc(1, 3)))
@@ -615,23 +629,23 @@ public class ReflexAgent {
 			{
 				Point rockP = val.copy();
 				rockP.x = rockP.x - 1;
-				path = mm.findPath(position, rockP);
+				path = mm.findPath(position, rockP, true);
 				if(path.peek() != null)
 					return;
 				
 				rockP.x = rockP.x + 2;
-				path = mm.findPath(position, rockP);
+				path = mm.findPath(position, rockP, true);
 				if(path.peek() != null)
 					return;
 				
 				rockP.x = rockP.x - 1;
 				rockP.y = rockP.y - 1;
-				path = mm.findPath(position, rockP);
+				path = mm.findPath(position, rockP, true);
 				if(path.peek() != null)
 					return;
 				
 				rockP.y = rockP.y + 2;
-				path = mm.findPath(position, rockP);
+				path = mm.findPath(position, rockP, true);
 			}
 		}
 	}
@@ -649,23 +663,23 @@ public class ReflexAgent {
 			{
 				Point rockP = val.copy();
 				rockP.x = rockP.x - 1;
-				path = mm.findPath(position, rockP);
+				path = mm.findPath(position, rockP, true);
 				if(path.peek() != null)
 					return;
 				
 				rockP.x = rockP.x + 2;
-				path = mm.findPath(position, rockP);
+				path = mm.findPath(position, rockP, true);
 				if(path.peek() != null)
 					return;
 				
 				rockP.x = rockP.x - 1;
 				rockP.y = rockP.y - 1;
-				path = mm.findPath(position, rockP);
+				path = mm.findPath(position, rockP, true);
 				if(path.peek() != null)
 					return;
 				
 				rockP.y = rockP.y + 2;
-				path = mm.findPath(position, rockP);
+				path = mm.findPath(position, rockP, true);
 			}
 		}
 	}
@@ -699,7 +713,7 @@ public class ReflexAgent {
 					for(int col = 0; col < 5; col++)
 					{
 						if(!ifObstacle(sight[row2][col]))
-							path = mm.findPath(position, translatePosition(2 - col, row2 - 1));
+							path = mm.findPath(position, translatePosition(2 - col, row2 - 1), false);
 						
 						if(path != null)
 							return;
@@ -721,7 +735,7 @@ public class ReflexAgent {
 				for(int row2 = 0; row2 < 7; row2++)
 				{
 					if(!ifObstacle(sight[row2][0]))
-						path = mm.findPath(position, translatePosition(2, row2 - 1));
+						path = mm.findPath(position, translatePosition(2, row2 - 1), false);
 					
 					if(path != null)
 						return;
@@ -741,7 +755,7 @@ public class ReflexAgent {
 				for(int row2 = 0; row2 < 7; row2++)
 				{
 					if(!ifObstacle(sight[row2][4]))
-						path = mm.findPath(position, translatePosition(-2, row2 - 1));
+						path = mm.findPath(position, translatePosition(-2, row2 - 1), false);
 					
 					if(path != null)
 						return;
@@ -757,7 +771,7 @@ public class ReflexAgent {
 		
 		if(cheese != null)
 		{
-			tempPath = mm.findPath(position, cheese);
+			tempPath = mm.findPath(position, cheese, false);
 		}
 		
 		if(tempPath != null)
