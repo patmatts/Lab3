@@ -163,6 +163,10 @@ public class ReflexAgent {
 			  else if(useKey(getLoc(1, 1)) || useHammer(getLoc(1, 1)))
 				  cmd = "r";
 			   
+			 //turn in direction of door if have a key
+			  else if(useKey(getLoc(0, 1)) || useHammer(getLoc(0, 1)))
+				  cmd = "r";
+			   
 			  //if there is an item nearby move in direction of item
 			  else if(!itemDir.equals("e"))
 				   cmd = itemDir;
