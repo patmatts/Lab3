@@ -7,6 +7,8 @@ public class Node {
 	
 	public static final int INFINITY = 10000;
 	
+	public static final String narrows = "=";
+	
 	private Point location;
 	
 	private boolean explored;

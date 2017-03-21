@@ -114,7 +114,13 @@ public class ReflexAgent {
 					   pathToRock();
 				   if(haveKey() && !objectAdjacent("#"))
 					   pathToDoor();
+				   if(!haveKey())
+					   pathToKey();
+				   if(!haveHammer())
+					   pathToHammer();
 			   }
+			   
+			   mm.BFS(position);
 				
 			   //if have cheese, use it
 			   if(haveCheese())
@@ -161,12 +167,15 @@ public class ReflexAgent {
 			  else if(!itemDir.equals("e"))
 				   cmd = itemDir;
 			   
-			  else if(energy < 1500 && mm.nearestUnexploredNode() != null && path.peek() == null)
+			  else if(energy < 1600 && mm.nearestUnexploredNode() != null && path.peek() == null)
 			  {
 				  Point p = mm.nearestUnexploredNode();
 				  
 				  if(p != null)
+				  {
+					  mm.BFS(position);
 					  path = mm.findPath(position, p, false);
+				  }
 				  
 				  if(path.peek() != null)
 					  cmd = executePath();
@@ -618,11 +627,15 @@ public class ReflexAgent {
 	
 	private void pathToRock()
 	{
+		
+		
 		if(sight[2][2].contains("@"))
 			return;
 		
 		if(mm.rock == true)
 		{
+			mm.BFSNar(position);
+			
 			ArrayList<Point> list = mm.itemSearch("@");
 			
 			for (Point val : list) 
@@ -655,8 +668,10 @@ public class ReflexAgent {
 		if(sight[2][2].contains("#"))
 			return;
 		
-		if(mm.rock == true)
+		if(mm.door == true)
 		{
+			mm.BFSNar(position);
+			
 			ArrayList<Point> list = mm.itemSearch("#");
 			
 			for (Point val : list) 
@@ -684,10 +699,56 @@ public class ReflexAgent {
 		}
 	}
 	
+	private void pathToKey()
+	{
+		if(sight[1][2].contains("K")  || sight[1][2].contains("="))
+			return;
+		
+		mm.BFSNar(position);
+		
+		ArrayList<Point> list = mm.itemSearch("K");
+		Queue<String> tempPath;
+		
+		for (Point val : list) 
+		{
+			Point keyP = val.copy();
+			tempPath = mm.findPath(position, keyP, true);
+			if(tempPath.peek() != null)
+			{
+				path = tempPath;
+				return;
+			}
+		}
+	}
+	
+	private void pathToHammer()
+	{
+		if(sight[1][2].contains("T") || sight[1][2].contains("="))
+			return;
+		
+		mm.BFSNar(position);
+		
+		ArrayList<Point> list = mm.itemSearch("T");
+		
+		Queue<String> tempPath;
+		
+		for (Point val : list) 
+		{
+			Point hammerP = val.copy();
+			tempPath = mm.findPath(position, hammerP, true);
+			if(tempPath.peek() != null)
+			{
+				path = tempPath;
+				return;
+			}
+		}
+	}
+	
 	private void avoidObstacle()
 	{
 		boolean obstacle = false;
 		int obstacleRow = 2;
+		mm.BFS(position);
 		
 		/*if(ifObstacle(sight[2][2]) && smell == 'f')
 		{
@@ -766,6 +827,8 @@ public class ReflexAgent {
 	
 	private boolean cheesePath()
 	{
+		mm.BFS(position);
+		
 		Point cheese = mm.getCheese();
 		Queue<String> tempPath = null;
 		

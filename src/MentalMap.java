@@ -81,7 +81,7 @@ public class MentalMap {
 		}
 	}
 	
-	private void BFS(Point pt)
+	public void BFS(Point pt)
 	{
 		Node start = map.get(pt.toString());
 		
@@ -154,6 +154,96 @@ public class MentalMap {
 			if(south.color == Node.Color.WHITE && south.getExplored() == true)
 			{
 				if(!south.getAccessible())
+					south.color = Node.Color.BLACK;
+				else
+				{
+					south.color = Node.Color.GRAY;
+					south.d = cur.d + 1;
+					south.parent = cur;
+					south.parentDir = "s";
+					q.add(south);
+				}
+			}
+			
+			cur.color = Node.Color.BLACK;
+				
+		}
+		
+	}
+	
+	public void BFSNar(Point pt)
+	{
+		Node start = map.get(pt.toString());
+		
+		for (Node value : map.values()) 
+		{
+		    value.color = Node.Color.WHITE;
+		    value.d = Node.INFINITY;
+		    value.parent = null;
+		}
+		
+		start.color = Node.Color.GRAY;
+		start.d = 0;
+		start.parent = null;
+		
+		Queue<Node> q = new LinkedList<Node>();
+		q.add(start);
+		
+		while(q.peek() != null)
+		{
+			Node cur = q.remove();
+			
+			
+			Node west = toWest(cur);
+			Node south = toSouth(cur);
+			Node east = toEast(cur);
+			Node north = toNorth(cur);
+			
+			if(west.color == Node.Color.WHITE && west.getExplored() == true)
+			{
+				if(!west.getAccessible() || west.getItems().contains(Node.narrows))
+					west.color = Node.Color.BLACK;
+				else
+				{
+					west.color = Node.Color.GRAY;
+					west.d = cur.d + 1;
+					west.parent = cur;
+					west.parentDir = "w";
+					q.add(west);
+				}
+			}
+			
+			if(east.color == Node.Color.WHITE && east.getExplored() == true)
+			{
+				if(!east.getAccessible() || east.getItems().contains(Node.narrows))
+					east.color = Node.Color.BLACK;
+				else
+				{
+					east.color = Node.Color.GRAY;
+					east.d = cur.d + 1;
+					east.parent = cur;
+					east.parentDir = "e";
+					q.add(east);
+				}
+			}
+			
+			if(north.color == Node.Color.WHITE && north.getExplored() == true)
+			{
+				if(!north.getAccessible() || north.getItems().contains(Node.narrows))
+					north.color = Node.Color.BLACK;
+				else
+				{
+					north.color = Node.Color.GRAY;
+					north.d = cur.d + 1;
+					north.parent = cur;
+					north.parentDir = "n";
+					q.add(north);
+				}
+			}
+			
+			if(south.color == Node.Color.WHITE && south.getExplored() == true)
+			{
+				if(!south.getAccessible()  || south.getItems().contains(Node.narrows))
 					south.color = Node.Color.BLACK;
 				else
 				{
@@ -296,33 +386,25 @@ public class MentalMap {
 		Node start = map.get(startP.toString());
 		Node dest = map.get(destP.toString());
 		
-		if(path(start, dest, narrowsMatter))
-			pathQueue = new LinkedList<String>();
+		path(start, dest, narrowsMatter);
 		
 		return pathQueue;
 	}
 	
-	private boolean path(Node start, Node dest, boolean narrowsMatter)
+	private void path(Node start, Node dest, boolean narrowsMatter)
 	{
-		boolean failure = false;
 		
 		if(dest == start)
 			;
 		else if(dest.parent == null)
-			return false;
+			return;
 		else
 		{
-			if(narrowsMatter && dest.getItems().contains("="))
-			{
-				pathQueue = new LinkedList<String>();
-				return true;
-			}
 			
-			failure = path(start, dest.parent, narrowsMatter);
+			path(start, dest.parent, narrowsMatter);
 			pathQueue.add(dest.parentDir);
 		}
 		
-		return failure;
 	}
 	
 	public Boolean toWestB(Node node)
