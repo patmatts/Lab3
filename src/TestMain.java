@@ -1,5 +1,8 @@
 import java.util.Queue;
-
+/**
+	TestMain.java
+	test class for the mental map and such
+**/
 public class TestMain {
 	
 	public enum Direction {

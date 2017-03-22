@@ -1,4 +1,7 @@
-
+/**
+	Point.java
+	An x,y coordinate.
+**/
 public class Point {
 	public int x;
 	public int y;

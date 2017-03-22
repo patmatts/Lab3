@@ -3,6 +3,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
+	/**
+		MentalMap.java
+		The agent's mentalmap graph.
+	**/
 public class MentalMap {
 	
 	private HashMap<String, Node> map;
@@ -13,11 +17,16 @@ public class MentalMap {
 	Boolean rock;
 	Boolean door;
 	
+	//Direction enum
 	public enum Direction {
 	    NORTH, EAST, SOUTH, WEST
 	}
 	
-	
+	/**
+		MentalMap()
+		MentalMap Constructor
+		Instantiates the fields.
+	**/
 	public MentalMap()
 	{
 		map = new HashMap<String, Node>();
@@ -28,8 +37,10 @@ public class MentalMap {
 		door = false;
 	}
 	
-	
-	
+	/**
+		updateMap(String[][] sight, char direction, Point position)
+		Runs another BST with an updated body.
+	**/
 	public void updateMap(String[][] sight, char direction, Point position)
 	{
 		Node current = map.get(position.toString());
@@ -49,6 +60,10 @@ public class MentalMap {
 		BFS(position);
 	}
 	
+	/**
+		updateMapBody(Node current, String[][] sight, Direction d)
+		Rotates the map based on the agent's direction.
+	**/
 	public void updateMapBody(Node current, String[][] sight, Direction d)
 	{
 		System.out.println("At point: " + current.toString());
@@ -81,6 +96,10 @@ public class MentalMap {
 		}
 	}
 	
+	/**
+		BFS(Point pt)
+		runs a breadth-first search and sets node values.
+	**/
 	public void BFS(Point pt)
 	{
 		Node start = map.get(pt.toString());
@@ -171,6 +190,10 @@ public class MentalMap {
 		
 	}
 	
+	/**
+		BFS(Point pt)
+		runs a breadth-first search with Narrows in mind.
+	**/
 	public void BFSNar(Point pt)
 	{
 		Node start = map.get(pt.toString());
@@ -261,6 +284,10 @@ public class MentalMap {
 		
 	}
 	
+	/**
+		itemSearch(String s)
+		searches through the mentalmap and returns a list where the item s is found
+	**/
 	public ArrayList<Point> itemSearch(String s)
 	{
 		ArrayList<Point> list = new ArrayList<Point>();
@@ -277,6 +304,10 @@ public class MentalMap {
 		return list;
 	}
 	
+	/**
+		nearestUnexploredNode()
+		returns the point where the nearest unexplored node is.
+	**/
 	public Point nearestUnexploredNode()
 	{
 		Node minD = null;
@@ -302,6 +333,10 @@ public class MentalMap {
 			return null;
 	}
 	
+	/**
+		isUnexplored(Node v)
+		returns true if the node has adjacent nodes that are unexplored
+	**/
 	private boolean isUnexplored(Node v)
 	{
 		if(!toEast(v).getExplored())
@@ -316,6 +351,10 @@ public class MentalMap {
 			return false;
 	}
 	
+	/**
+		insertUnexploredNode(Point pt)
+		inserts a node at pt that is unexplored into the map
+	**/
 	private void insertUnexploredNode(Point pt)
 	{
 		Node n = new Node(false, pt);
@@ -323,6 +362,10 @@ public class MentalMap {
 		map.put(n.toString(), n);
 	}
 	
+	/**
+		exploreNode(Point pt, boolean access, String items)
+		Set the node as explored as you explore it
+	**/
 	public void exploreNode(Point pt, boolean access, String items)
 	{
 		
@@ -359,6 +402,10 @@ public class MentalMap {
 		
 	}
 	
+	/**
+		insertNode(boolean explored, Point pt, boolean access, String items)
+		inserts a node with the indicated fields
+	**/
 	public void insertNode(boolean explored, Point pt, boolean access, String items)
 	{
 		Node n = new Node(explored, pt, access, items);
@@ -379,6 +426,11 @@ public class MentalMap {
 			
 	}
 	
+	/**
+		findPath(Point startP, Point destP, boolean narrowsMatter)
+		finds the shortest path from startP to destP
+		if narrowsMatter is flagged, then doesn't ignore narrows
+	**/
 	public Queue<String> findPath(Point startP, Point destP, boolean narrowsMatter)
 	{
 		pathQueue = new LinkedList<String>();
@@ -391,6 +443,10 @@ public class MentalMap {
 		return pathQueue;
 	}
 	
+	/**
+		path(Node start, Node dest, boolean narrowsMatter)
+		helper function for findPath
+	**/
 	private void path(Node start, Node dest, boolean narrowsMatter)
 	{
 		
@@ -571,6 +627,10 @@ public class MentalMap {
 		return map.get(key);
 	}
 	
+	/**
+		canAccess(String s, Point p)
+		returns true if the point can be accessed
+	**/
 	public boolean canAccess(String s, Point p)
 	{
 		if(s.contains("*"))
@@ -589,12 +649,20 @@ public class MentalMap {
 			return true;
 	}
 	
+	/**
+		printMap()
+		prints the mental map in chunks
+	**/
 	public void printMap()
 	{
 		Node n = map.get(new Point(1, 2).toString());
 		System.out.println(n.d);
 	}
 	
+	/**
+		getCheese()
+		Returns the point that cheese is at.
+	**/
 	public Point getCheese()
 	{
 		return cheese;

@@ -1,13 +1,7 @@
-// CS 455: AI, Group 8: Patrick Matts, Levi Sinclair, Sheridan Olds
-//ReflexAgent.java contains the reflexagent and the protocols to connect to the Maeden Simulator Environment
-
-//note to other members: will try to clean up program, eventually I want ReflexAgent to just deal with 
-//controlling the agent and will set up a class called MaedenClient.java to handle initial connection
-//and contain the main function, many things will be static for now
-
-//test changes
-
-
+/**
+	CS 455: AI, Group 8: Patrick Matts, Levi Sinclair, Sheridan Olds
+	ReflexAgent.java contains the reflexagent and the protocols to connect to the Maeden Simulator Environment
+**/
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -106,6 +100,12 @@ public class ReflexAgent {
 			   //test to see if item is nearby
 			   String itemDir = itemNearby();
 			   
+				 
+			   //if have cheese, use it
+			   if(haveCheese())
+				  cmd  = "u";
+				
+				 //
 			   if(!cheesePath())
 			   {
 				   if(path.peek() == null)
@@ -120,15 +120,12 @@ public class ReflexAgent {
 					   pathToHammer();
 			   }
 			   
+				 //Runs a breadth first search from the current position
 			   mm.BFS(position);
 				
-			   //if have cheese, use it
-			   if(haveCheese())
-				  cmd  = "u";
-			 
-			   
+				
 			   //this block deals with narrows and generally just tries to go into them and drops stuff before
-			   else if(sight[2][2].contains("=") && haveHammer())
+			   if(sight[2][2].contains("=") && haveHammer())
 				  cmd = "d T";
 			   else if(sight[2][2].contains("=") && haveKey())
 				   cmd = "d K";
@@ -519,6 +516,7 @@ public class ReflexAgent {
 		
 	}
 	
+	//return the direction of nearby items in the visual field.
 	private String itemNearby()
 	{
 		//
@@ -628,7 +626,10 @@ public class ReflexAgent {
 		
 		return false;
 	}
-	
+	/**
+		pathToRock()
+		Constructs a path to a square adjacent to the door if possible.
+	**/
 	private void pathToRock()
 	{
 		
@@ -667,6 +668,21 @@ public class ReflexAgent {
 		}
 	}
 	
+	/*
+	private void explore()
+	{
+		//Explores nodes with unexplored on them
+		mm.BFSNar(position);
+		path = mm.findPath(position, mm.closestUnexploredNode, true)
+		if(path != null)
+			return;
+	}
+	*/
+	
+	/**
+		pathToDoor()
+		Constructs a path to a square adjacent to the door if possible.
+	**/
 	private void pathToDoor()
 	{
 		if(sight[2][2].contains("#"))
@@ -702,7 +718,10 @@ public class ReflexAgent {
 			}
 		}
 	}
-	
+	/**
+		pathToKey()
+		Constructs a path to the key if possible.
+	**/
 	private void pathToKey()
 	{
 		if(sight[1][2].contains("K")  || sight[1][2].contains("="))
@@ -725,6 +744,9 @@ public class ReflexAgent {
 		}
 	}
 	
+	/**
+		Constructs a path to the hammer if possible.
+	**/
 	private void pathToHammer()
 	{
 		if(sight[1][2].contains("T") || sight[1][2].contains("="))
@@ -747,7 +769,10 @@ public class ReflexAgent {
 			}
 		}
 	}
-	
+	/**
+		avoidObstacle()
+		Constructs a path that will avoid the obstancle in the direction of the cheese (hopefully).
+	**/
 	private void avoidObstacle()
 	{
 		boolean obstacle = false;
@@ -828,7 +853,10 @@ public class ReflexAgent {
 			}
 		}
 	}
-	
+	/**
+		cheesePath()
+		Constructs a path to the cheese.
+	**/
 	private boolean cheesePath()
 	{
 		mm.BFS(position);
@@ -853,7 +881,10 @@ public class ReflexAgent {
 		return false;
 			
 	}
-	
+	/**
+		executrPath()
+		Goes through the path queue and makes the correct moves.
+	**/
 	private String executePath()
 	{
 		if(path.peek().charAt(0) == direction)
@@ -872,7 +903,10 @@ public class ReflexAgent {
 		else
 			return "r";
 	}
-	
+	/**
+		objectAdjacent(String s)
+		Returns true if there is an object directly north east west or south of agent.
+	**/
 	private boolean objectAdjacent(String s)
 	{
 		if(sight[2][2].contains(s))
