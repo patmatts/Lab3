@@ -1,5 +1,5 @@
 /**
-		Node.java
+		Node.java Group 9: Patrick Matts, Levi Sinclair, Sheridan Olds
 		Node class to be used by the mental map.
 	**/
 public class Node {
@@ -8,6 +8,7 @@ public class Node {
 		WHITE, GRAY, BLACK
 	}
 	
+	//value for infinite d value
 	public static final int INFINITY = 10000;
 	
 	public static final String narrows = "=";

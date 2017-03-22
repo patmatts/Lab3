@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 	/**
-		MentalMap.java
+		MentalMap.java Group 9: Patrick Matts, Levi Sinclair, Sheridan Olds
 		The agent's mentalmap graph.
 	**/
 public class MentalMap {
@@ -66,7 +66,7 @@ public class MentalMap {
 	**/
 	public void updateMapBody(Node current, String[][] sight, Direction d)
 	{
-		System.out.println("At point: " + current.toString());
+		//System.out.println("At point: " + current.toString());
 		
 		current = toRight(current, d);
 		exploreNode(current.getPoint(), canAccess(sight[1][1], current.getPoint()), sight[1][1]);
@@ -84,7 +84,7 @@ public class MentalMap {
 			for(int col = 0; col < 5; col++)
 			{
 				exploreNode(current.getPoint(), canAccess(sight[row][col], current.getPoint()), sight[row][col]);
-				System.out.print("(" + current.getItems() + ")");
+				//System.out.print("(" + current.getItems() + ")");
 				if(col < 4)
 					current = toLeft(current, d);
 			}
@@ -92,7 +92,7 @@ public class MentalMap {
 			
 			if(row < 6)
 				current = toUp(current, d);
-			System.out.println();
+			//System.out.println();
 		}
 	}
 	

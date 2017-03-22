@@ -1,4 +1,8 @@
-
+/**
+	CS 455: AI, Group 9: Patrick Matts, Levi Sinclair, Sheridan Olds
+	MaedenClient.java contains the  the protocols to connect to the Maeden Simulator Environment
+	and the Main function
+**/
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;

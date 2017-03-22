@@ -1,6 +1,6 @@
 import java.util.Queue;
 /**
-	TestMain.java
+	TestMain.java Group 9: Patrick Matts, Levi Sinclair, Sheridan Olds
 	test class for the mental map and such
 **/
 public class TestMain {
@@ -9,7 +9,7 @@ public class TestMain {
 	    NORTH, EAST, SOUTH, WEST
 	}
 	
-	public static void main(String[] args)
+	/*public static void main(String[] args)
 	{
 		MentalMap mm = new MentalMap();
 		
@@ -55,5 +55,5 @@ public class TestMain {
 		System.out.println(items.contains("@"));
 		
 		
-	}
+	}*/
 }

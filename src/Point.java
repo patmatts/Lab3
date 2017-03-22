@@ -1,6 +1,7 @@
 /**
-	Point.java
+	Point.java Group 9: Patrick Matts, Levi Sinclair, Sheridan Olds
 	An x,y coordinate.
+	Fairly self explanatory 
 **/
 public class Point {
 	public int x;

@@ -1,5 +1,5 @@
 /**
-	CS 455: AI, Group 8: Patrick Matts, Levi Sinclair, Sheridan Olds
+	CS 455: AI, Group 9: Patrick Matts, Levi Sinclair, Sheridan Olds
 	ReflexAgent.java contains the reflexagent and the protocols to connect to the Maeden Simulator Environment
 **/
 
@@ -103,9 +103,14 @@ public class ReflexAgent {
 				 
 			   //if have cheese, use it
 			   if(haveCheese())
+			   {
 				  cmd  = "u";
+				  executeAction(cmd);
+			   }
+			   
 				
-				 //
+			   //if it does find a path to the cheese the agent attempts to
+			   //path to a key or hammer or to a door or rock if it has the correct object
 			   if(!cheesePath())
 			   {
 				   if(path.peek() == null)
@@ -134,7 +139,7 @@ public class ReflexAgent {
 			  // else if (sight[1][3].contains("="))
 					  //cmd = "l";
 			   
-			   else if(pickupItem()&& !sight[2][2].contains("="))
+			   else if(pickupItem() && !sight[2][2].contains("="))
 				   cmd = "g";
 			   
 			   else if(path.peek() != null)
@@ -168,7 +173,7 @@ public class ReflexAgent {
 			  else if(!itemDir.equals("e"))
 				   cmd = itemDir;
 			   
-			  else if(energy < 1600 && mm.nearestUnexploredNode() != null && path.peek() == null)
+			  else if(energy < 1500 && mm.nearestUnexploredNode() != null && path.peek() == null)
 			  {
 				  Point p = mm.nearestUnexploredNode();
 				  
